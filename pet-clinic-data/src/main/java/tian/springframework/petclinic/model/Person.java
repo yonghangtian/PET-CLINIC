@@ -4,7 +4,7 @@ package tian.springframework.petclinic.model;
  * @author tianyh
  * @since 5/28/19 4:28 PM
  */
-public class Person {
+public class Person extends BaseEntity {
     private String firstName;
     private String lastName;
 
