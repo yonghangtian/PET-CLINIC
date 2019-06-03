@@ -2,7 +2,7 @@ package tian.springframework.petclinic.model;
 
 /**
  * @author tianyh
- * @date 5/28/19 4:28 PM
+ * @since 5/28/19 4:28 PM
  */
 public class Person {
     private String firstName;
