@@ -1,7 +1,7 @@
 package tian.springframework.petclinic.services.map;
 
 import tian.springframework.petclinic.model.Pet;
-import tian.springframework.petclinic.services.CrudService;
+import tian.springframework.petclinic.services.PetService;
 
 import java.util.Set;
 
@@ -9,7 +9,7 @@ import java.util.Set;
  * @author tianyh
  * created by tianyh on 6/5/19 2:56 PM
  */
-public class PetServiceMap extends AbstractMapService<Pet, Long> implements CrudService<Pet, Long> {
+public class PetServiceMap extends AbstractMapService<Pet, Long> implements PetService {
     @Override
     public Set<Pet> findAll() {
         return super.findall();

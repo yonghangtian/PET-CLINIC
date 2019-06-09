@@ -1,7 +1,7 @@
 package tian.springframework.petclinic.services.map;
 
 import tian.springframework.petclinic.model.Owner;
-import tian.springframework.petclinic.services.CrudService;
+import tian.springframework.petclinic.services.OwnerService;
 
 import java.util.Set;
 
@@ -9,10 +9,15 @@ import java.util.Set;
  * @author tianyh
  * created by tianyh on 6/5/19 2:35 PM
  */
-public class OwnerServiceMap extends AbstractMapService<Owner, Long> implements CrudService<Owner, Long> {
+public class OwnerServiceMap extends AbstractMapService<Owner, Long> implements OwnerService {
     @Override
     public Set<Owner> findAll() {
         return super.findall();
+    }
+
+    @Override
+    public Owner findByLastName(String lastName) {
+        return null;
     }
 
     @Override
