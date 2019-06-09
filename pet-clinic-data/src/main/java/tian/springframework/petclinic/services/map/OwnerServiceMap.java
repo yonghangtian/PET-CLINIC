@@ -1,5 +1,6 @@
 package tian.springframework.petclinic.services.map;
 
+import org.springframework.stereotype.Service;
 import tian.springframework.petclinic.model.Owner;
 import tian.springframework.petclinic.services.OwnerService;
 
@@ -9,6 +10,7 @@ import java.util.Set;
  * @author tianyh
  * created by tianyh on 6/5/19 2:35 PM
  */
+@Service
 public class OwnerServiceMap extends AbstractMapService<Owner, Long> implements OwnerService {
     @Override
     public Set<Owner> findAll() {

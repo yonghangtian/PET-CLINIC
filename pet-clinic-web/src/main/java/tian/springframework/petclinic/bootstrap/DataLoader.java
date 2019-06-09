@@ -1,13 +1,12 @@
 package tian.springframework.petclinic.bootstrap;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import tian.springframework.petclinic.model.Owner;
 import tian.springframework.petclinic.model.Vet;
 import tian.springframework.petclinic.services.OwnerService;
 import tian.springframework.petclinic.services.VetService;
-import tian.springframework.petclinic.services.map.OwnerServiceMap;
-import tian.springframework.petclinic.services.map.VetServiceMap;
 
 /**
  * @author tianyh
@@ -18,9 +17,10 @@ public class DataLoader implements CommandLineRunner {
     private final OwnerService ownerService;
     private final VetService vetService;
 
-    public DataLoader(){
-        this.ownerService = new OwnerServiceMap();
-        this.vetService = new VetServiceMap();
+    @Autowired
+    public DataLoader(OwnerService ownerService, VetService vetService) {
+        this.ownerService = ownerService;
+        this.vetService = vetService;
     }
 
     @Override
