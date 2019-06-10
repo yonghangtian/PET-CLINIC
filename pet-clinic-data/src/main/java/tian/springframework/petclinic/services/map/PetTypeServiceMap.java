@@ -1,5 +1,6 @@
 package tian.springframework.petclinic.services.map;
 
+import org.springframework.stereotype.Service;
 import tian.springframework.petclinic.model.PetType;
 import tian.springframework.petclinic.services.PetTypeService;
 
@@ -9,6 +10,7 @@ import java.util.Set;
  * @author tianyh
  * created by tianyh on 6/10/19 8:01 PM
  */
+@Service
 public class PetTypeServiceMap extends AbstractMapService<PetType, Long> implements PetTypeService {
 
     @Override
