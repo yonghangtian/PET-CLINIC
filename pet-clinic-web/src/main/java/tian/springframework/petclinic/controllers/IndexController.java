@@ -10,8 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class IndexController {
     @RequestMapping({"","/","index","index.html"})
-    public String index(){
+    public String index() {
         // this will look for a html file called "index", like index.html
         return "index";
     }
+
+    @RequestMapping({"/oups"})
+    public String oupsHandler() {
+        return "notImplYet";
+    }
+
 }
