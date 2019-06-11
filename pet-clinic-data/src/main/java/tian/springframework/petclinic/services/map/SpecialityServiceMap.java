@@ -1,34 +1,34 @@
 package tian.springframework.petclinic.services.map;
 
 import org.springframework.stereotype.Service;
-import tian.springframework.petclinic.model.Vet;
-import tian.springframework.petclinic.services.VetService;
+import tian.springframework.petclinic.model.Speciality;
+import tian.springframework.petclinic.services.SpecialityService;
 
 import java.util.Set;
 
 /**
  * @author tianyh
- * created by tianyh on 6/5/19 2:56 PM
+ * created by tianyh on 6/11/19 9:35 AM
  */
 @Service
-public class VetServiceMap extends AbstractMapService<Vet, Long> implements VetService {
+public class SpecialityServiceMap extends AbstractMapService<Speciality, Long> implements SpecialityService {
     @Override
-    public Set<Vet> findAll() {
+    public Set<Speciality> findAll() {
         return super.findAll();
     }
 
     @Override
-    public Vet findById(Long id) {
+    public Speciality findById(Long id) {
         return super.findById(id);
     }
 
     @Override
-    public Vet save(Vet object) {
+    public Speciality save(Speciality object) {
         return super.save(object);
     }
 
     @Override
-    public void delete(Vet object) {
+    public void delete(Speciality object) {
         super.delete(object);
     }
 
