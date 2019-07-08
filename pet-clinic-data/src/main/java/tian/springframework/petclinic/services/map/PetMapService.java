@@ -1,35 +1,34 @@
 package tian.springframework.petclinic.services.map;
 
 import org.springframework.stereotype.Service;
-import tian.springframework.petclinic.model.PetType;
-import tian.springframework.petclinic.services.PetTypeService;
+import tian.springframework.petclinic.model.Pet;
+import tian.springframework.petclinic.services.PetService;
 
 import java.util.Set;
 
 /**
  * @author tianyh
- * created by tianyh on 6/10/19 8:01 PM
+ * created by tianyh on 6/5/19 2:56 PM
  */
 @Service
-public class PetTypeServiceMap extends AbstractMapService<PetType, Long> implements PetTypeService {
-
+public class PetMapService extends AbstractMapService<Pet, Long> implements PetService {
     @Override
-    public Set<PetType> findAll() {
+    public Set<Pet> findAll() {
         return super.findAll();
     }
 
     @Override
-    public PetType findById(Long id) {
+    public Pet findById(Long id) {
         return super.findById(id);
     }
 
     @Override
-    public PetType save(PetType object) {
+    public Pet save(Pet object) {
         return super.save(object);
     }
 
     @Override
-    public void delete(PetType object) {
+    public void delete(Pet object) {
         super.delete(object);
     }
 
