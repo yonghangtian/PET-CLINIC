@@ -32,7 +32,6 @@ class VetMapServiceTest {
 
     @BeforeEach
     public void setUp() {
-        vetMapService = new VetMapService(specialityService);
         Vet vet = Vet.builder().id(id).build();
         vetMapService.save(vet);
     }
