@@ -2,8 +2,10 @@ package tian.springframework.petclinic.services.map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import tian.springframework.petclinic.model.Speciality;
 import tian.springframework.petclinic.model.Vet;
 import tian.springframework.petclinic.services.SpecialityService;
@@ -17,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * created by tianyh on 7/11/19 3:26 PM
  */
+@ExtendWith(MockitoExtension.class)
 class VetMapServiceTest {
 
     @Mock
