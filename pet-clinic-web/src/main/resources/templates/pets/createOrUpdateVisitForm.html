@@ -9,7 +9,8 @@
 </h2>
 
 <b>Pet</b>
-<table class="table table-striped">
+<!--/*@thymesVar id="pet" type="tian.springframework.petclinic.model.Pet"*/-->
+<table class="table table-striped" th:object="${pet}">
     <thead>
     <tr>
         <th>Name</th>
@@ -18,13 +19,11 @@
         <th>Owner</th>
     </tr>
     </thead>
-    <tr>
-        <td th:text="${pet.name}" /></td>
-        <td
-                th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}" /></td>
-        <td th:text="${pet.petType}" /></td>
-        <td
-                th:text="${pet.owner?.firstName + ' ' + pet.owner?.lastName}" /></td>
+    <tr >
+        <td th:text="*{name}"></td>
+        <td th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}"></td>
+        <td th:text="*{petType}"></td>
+        <td th:text="${pet.owner?.firstName + ' ' + pet.owner?.lastName}"></td>
     </tr>
 </table>
 
@@ -34,6 +33,7 @@
                 th:replace="~{fragments/inputField :: input ('Date', 'date', 'date')}"  />
         <input
                 th:replace="~{fragments/inputField :: input ('Description', 'description', 'text')}" />
+        <!--I need to implement a drop down list of Vets' name for user to choose -->
     </div>
 
     <div class="form-group">
@@ -52,8 +52,8 @@
         <th>Description</th>
     </tr>
     <tr th:if="${!visit['new']}" th:each="visit : ${pet.visits}">
-        <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}" /></td>
-        <td th:text=" ${visit.description}" /></td>
+        <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
+        <td th:text=" ${visit.description}"></td>
     </tr>
 </table>
 

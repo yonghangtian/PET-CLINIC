@@ -18,12 +18,15 @@ import javax.persistence.*;
 @Table(name = "prices")
 public class Price extends BaseEntity{
     @Builder
-    public Price(Long id, int price) {
+    public Price(Long id, int hourlyPay, String currency) {
         super(id);
-        this.price = price;
+        this.hourlyPay = hourlyPay;
+        this.currency = currency;
     }
 
-    @Column(name = "price")
-    private int price;
+    @Column(name = "hourlyPay")
+    private int hourlyPay;
 
+    @Column(name = "currency")
+    private String currency;
 }

@@ -94,11 +94,13 @@ public class DataLoader implements CommandLineRunner {
         System.out.println("Loaded Owners....");
 
         Price samPrice = new Price();
-        samPrice.setPrice(500);
+        samPrice.setHourlyPay(500);
+        samPrice.setCurrency("HKD");
         Price savedSamPrice = this.priceService.save(samPrice);
 
         Price jesPrice = new Price();
-        jesPrice.setPrice(1000);
+        jesPrice.setHourlyPay(1000);
+        jesPrice.setCurrency("HKD");
         Price savedJesPrice = this.priceService.save(jesPrice);
 
         Vet vet1 = new Vet();
@@ -106,7 +108,7 @@ public class DataLoader implements CommandLineRunner {
         vet1.setLastName("Axe");
         vet1.getSpecialities().add(savedRadiology);
         vet1.setPrice(savedSamPrice);
-        this.vetService.save(vet1);
+        Vet savedVet1 = this.vetService.save(vet1);
 
         Vet vet2 = new Vet();
         vet2.setFirstName("Jessie");
@@ -114,13 +116,21 @@ public class DataLoader implements CommandLineRunner {
         vet2.getSpecialities().add(savedSurgery);
         vet2.getSpecialities().add(savedDentistry);
         vet2.setPrice(savedJesPrice);
-        this.vetService.save(vet2);
+        Vet savedVet2 = this.vetService.save(vet2);
+
+        Visit dogVisit = new Visit();
+        dogVisit.setPet(mikesPet);
+        dogVisit.setVet(savedVet1);
+        dogVisit.setDate(LocalDate.now());
+        dogVisit.setDescription("Dog visit");
+        this.visitService.save(dogVisit);
 
         Visit catVisit = new Visit();
         catVisit.setPet(fionas);
-        catVisit.setVet(vet2);
+        catVisit.setVet(savedVet2);
         catVisit.setDate(LocalDate.now());
         catVisit.setDescription("Sneezy Kitty");
+        this.visitService.save(catVisit);
 
         System.out.println("Loaded Vets....");
     }
