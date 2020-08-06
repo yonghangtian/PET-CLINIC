@@ -43,8 +43,7 @@ public class OwnerController {
     public String processFindForm(Owner owner, BindingResult result, Model model) {
         // allow parameterless GET request for /owners to return all records
         if (owner.getLastName() == null) {
-            // empty string signifies broadest possible search
-            owner.setLastName("");
+            owner.setLastName(""); // empty string signifies broadest possible search
         }
 
         // find owners by last name
@@ -61,7 +60,7 @@ public class OwnerController {
         } else {
             // multiple owners found
             model.addAttribute("selections", results);
-            return "owners/ownerList";
+            return "owners/ownersList";
         }
     }
 
