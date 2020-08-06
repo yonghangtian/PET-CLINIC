@@ -19,14 +19,16 @@ public class DataLoader implements CommandLineRunner {
     private final PetTypeService petTypeService;
     private final SpecialityService specialityService;
     private final VisitService visitService;
+    private final PriceService priceService;
 
     @Autowired
-    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService, SpecialityService specialityService, VisitService visitService) {
+    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService, SpecialityService specialityService, VisitService visitService, PriceService priceService) {
         this.ownerService = ownerService;
         this.vetService = vetService;
         this.petTypeService = petTypeService;
         this.specialityService = specialityService;
         this.visitService = visitService;
+        this.priceService = priceService;
     }
 
     @Override
@@ -66,8 +68,6 @@ public class DataLoader implements CommandLineRunner {
         owner1.setCity("HK");
         owner1.setTelephone("1213123123");
 
-        //owner1.builder().
-
         Pet mikesPet = new Pet();
         mikesPet.setPetType(savedDogPetType);
         mikesPet.setOwner(owner1);
@@ -91,25 +91,36 @@ public class DataLoader implements CommandLineRunner {
         owner2.getPets().add(fionas);
         this.ownerService.save(owner2);
 
-        Visit catVisit = new Visit();
-        catVisit.setPet(fionas);
-        catVisit.setDate(LocalDate.now());
-        catVisit.setDescription("Sneezy Kitty");
-
-        this.visitService.save(catVisit);
         System.out.println("Loaded Owners....");
+
+        Price samPrice = new Price();
+        samPrice.setPrice(500);
+        Price savedSamPrice = this.priceService.save(samPrice);
+
+        Price jesPrice = new Price();
+        jesPrice.setPrice(1000);
+        Price savedJesPrice = this.priceService.save(jesPrice);
 
         Vet vet1 = new Vet();
         vet1.setFirstName("Sam");
         vet1.setLastName("Axe");
         vet1.getSpecialities().add(savedRadiology);
+        vet1.setPrice(savedSamPrice);
         this.vetService.save(vet1);
 
         Vet vet2 = new Vet();
         vet2.setFirstName("Jessie");
         vet2.setLastName("Porter");
         vet2.getSpecialities().add(savedSurgery);
+        vet2.getSpecialities().add(savedDentistry);
+        vet2.setPrice(savedJesPrice);
         this.vetService.save(vet2);
+
+        Visit catVisit = new Visit();
+        catVisit.setPet(fionas);
+        catVisit.setVet(vet2);
+        catVisit.setDate(LocalDate.now());
+        catVisit.setDescription("Sneezy Kitty");
 
         System.out.println("Loaded Vets....");
     }

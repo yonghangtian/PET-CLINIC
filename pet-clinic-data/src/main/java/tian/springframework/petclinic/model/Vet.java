@@ -21,11 +21,15 @@ import java.util.Set;
 public class Vet extends Person {
 
     @Builder
-    public Vet(Long id, String firstName, String lastName, Set<Speciality> specialities) {
+    public Vet(Long id, String firstName, String lastName, Price price, Set<Speciality> specialities) {
         super(id, firstName, lastName);
+        this.price = price;
         this.specialities = specialities;
     }
 
+    @OneToOne
+    @JoinColumn(name = "price_id")
+    Price price;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "vet_specialities", joinColumns = @JoinColumn(name = "vet_id"),

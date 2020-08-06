@@ -20,11 +20,12 @@ import java.time.LocalDate;
 public class Visit extends BaseEntity {
 
     @Builder
-    public Visit(Long id, LocalDate date, String description, Pet pet) {
+    public Visit(Long id, LocalDate date, String description, Pet pet, Vet vet) {
         super(id);
         this.date = date;
         this.description = description;
         this.pet = pet;
+        this.vet = vet;
     }
 
     @Column(name = "date")
@@ -36,4 +37,8 @@ public class Visit extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet pet;
+
+    @ManyToOne
+    @JoinColumn(name = "vet_id")
+    private Vet vet;
 }
