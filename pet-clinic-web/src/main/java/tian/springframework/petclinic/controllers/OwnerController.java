@@ -60,7 +60,7 @@ public class OwnerController {
         } else {
             // multiple owners found
             model.addAttribute("selections", results);
-            return "owners/ownersList";
+            return "owners/ownerList";
         }
     }
 
