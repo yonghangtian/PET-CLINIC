@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * @author tianyh
@@ -53,5 +54,26 @@ public class Visit extends BaseEntity {
         this.amount = (long) this.duration * this.vet.getPrice().getHourlyPay();
 
         return this.amount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Visit)) {
+            return false;
+        }
+        Visit visit = (Visit) o;
+        return getDuration() == visit.getDuration() &&
+                Objects.equals(getDate(), visit.getDate()) &&
+                Objects.equals(getDescription(), visit.getDescription()) &&
+                Objects.equals(getPet(), visit.getPet()) &&
+                Objects.equals(getVet(), visit.getVet());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDate(), getDuration(), getDescription(), getPet(), getVet());
     }
 }

@@ -14,6 +14,7 @@ import tian.springframework.petclinic.model.Owner;
 import tian.springframework.petclinic.model.Pet;
 import tian.springframework.petclinic.model.PetType;
 import tian.springframework.petclinic.services.PetService;
+import tian.springframework.petclinic.services.VetService;
 import tian.springframework.petclinic.services.VisitService;
 
 import java.net.URI;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class VisitControllerTest {
 
     private static final String PETS_CREATE_OR_UPDATE_VISIT_FORM = "pets/createOrUpdateVisitForm";
+    private static final String REVIEW_CURRENT_VISIT = "pets/reviewCurrentVisit";
     private static final String REDIRECT_OWNERS_1 = "redirect:/owners/{ownerId}";
     private static final String YET_ANOTHER_VISIT_DESCRIPTION = "yet another visit";
 
@@ -43,6 +45,9 @@ class VisitControllerTest {
 
     @Mock
     VisitService visitService;
+
+    @Mock
+    VetService vetService;
 
     @InjectMocks
     VisitController visitController;
@@ -84,6 +89,7 @@ class VisitControllerTest {
                 .build();
     }
 
+    // todo: debug
     @Test
     void initNewVisitForm() throws Exception {
         mockMvc.perform(get(visitsUri))
@@ -92,15 +98,17 @@ class VisitControllerTest {
         ;
     }
 
-
+    // todo: debug
     @Test
     void processNewVisitForm() throws Exception {
         mockMvc.perform(post(visitsUri)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("date","2018-11-11")
-                .param("description", YET_ANOTHER_VISIT_DESCRIPTION))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name(REDIRECT_OWNERS_1))
+                .param("description", YET_ANOTHER_VISIT_DESCRIPTION)
+                .param("duration", "2")
+                .param("vet", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(PETS_CREATE_OR_UPDATE_VISIT_FORM))
                 .andExpect(model().attributeExists("visit"))
         ;
     }

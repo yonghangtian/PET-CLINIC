@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * @author tian
@@ -29,4 +30,22 @@ public class Price extends BaseEntity{
 
     @Column(name = "currency")
     private String currency;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Price)) {
+            return false;
+        }
+        Price price = (Price) o;
+        return getHourlyPay() == price.getHourlyPay() &&
+                Objects.equals(getCurrency(), price.getCurrency());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getHourlyPay(), getCurrency());
+    }
 }
