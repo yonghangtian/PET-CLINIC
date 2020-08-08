@@ -44,7 +44,14 @@ class OwnerSDJpaServiceTest {
     String LAST_NAME = "tian";
     @BeforeEach
     void setUp() {
-        returnOwner = Owner.builder().id(1l).lastName(LAST_NAME).build();
+        returnOwner = Owner.builder()
+                .id(1l)
+                .lastName(LAST_NAME)
+                .firstName("fuck")
+                .address("HK")
+                .city("HK")
+                .telephone("131613")
+                .build();
     }
 
     @Test
@@ -61,8 +68,22 @@ class OwnerSDJpaServiceTest {
     @Test
     void findAll() {
         Set<Owner> returnOwnersSet = new HashSet<>();
-        returnOwnersSet.add(Owner.builder().id(1l).build());
-        returnOwnersSet.add(Owner.builder().id(2l).build());
+        returnOwnersSet.add(Owner.builder()
+                .id(1l)
+                .lastName("fuck")
+                .firstName("fuck")
+                .address("HK")
+                .city("HK")
+                .telephone("131613")
+                .build());
+        returnOwnersSet.add(Owner.builder()
+                .id(2l)
+                .lastName("fucker")
+                .firstName("fucker")
+                .address("SH")
+                .city("SH")
+                .telephone("1316134")
+                .build());
 
         when(ownerRepository.findAll()).thenReturn(returnOwnersSet);
 
