@@ -11,6 +11,7 @@ import java.time.LocalDate;
 /**
  * @author tianyh
  * created by tianyh on 6/10/19 5:57 PM
+ * Each visit is limitted to 1 hour.
  */
 @Getter
 @Setter
@@ -31,6 +32,12 @@ public class Visit extends BaseEntity {
     @Column(name = "date")
     private LocalDate date;
 
+    @Column(name = "duration")
+    private int duration;
+
+    @Column(name = "amount")
+    private long amount;
+
     @Column(name = "description")
     private String description;
 
@@ -41,4 +48,10 @@ public class Visit extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "vet_id")
     private Vet vet;
+
+    public long getAmount() {
+        this.amount = (long) this.duration * this.vet.getPrice().getHourlyPay();
+
+        return this.amount;
+    }
 }

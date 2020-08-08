@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import tian.springframework.petclinic.model.Owner;
 import tian.springframework.petclinic.model.Pet;
 import tian.springframework.petclinic.model.Vet;
 import tian.springframework.petclinic.model.Visit;
@@ -17,7 +18,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * created by tianyh on 8/8/19 9:39 PM
@@ -63,6 +63,7 @@ public class VisitController {
         vetList.addAll(vetService.findAll());
         model.put("pet", pet);
         model.put("vets", vetList);
+
         Visit visit = new Visit();
         pet.getVisits().add(visit);
         visit.setPet(pet);
@@ -81,13 +82,16 @@ public class VisitController {
      *  Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is called
      */
     @PostMapping("/owners/{ownerId}/pets/{petId}/visits/new")
-    public String processNewVisitForm(@Valid Visit visit, BindingResult result) {
+    public String processNewVisitForm(@Valid Visit visit, BindingResult result, Map<String, Object> model) {
         if (result.hasErrors()) {
             return "pets/createOrUpdateVisitForm";
         } else {
-            visitService.save(visit);
+            Visit newVisit = visitService.save(visit);
+            Owner owner = newVisit.getPet().getOwner();
+            model.put("newVisit", newVisit);
+            model.put("owner", owner);
 
-            return "redirect:/owners/{ownerId}";
+            return "pets/reviewCurrentVisit";
         }
     }
 }

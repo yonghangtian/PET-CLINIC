@@ -1,0 +1,84 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'owners')}">
+
+<body>
+
+<h2>
+    <block>Checkout Visit</block>
+</h2>
+
+<b>Pet</b>
+<!--/*@thymesVar id="pet" type="tian.springframework.petclinic.model.Pet"*/-->
+<table class="table table-striped" th:object="${pet}">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Birth Date</th>
+        <th>Type</th>
+        <th>Owner</th>
+    </tr>
+    </thead>
+    <tr >
+        <td th:text="*{name}"></td>
+        <td th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}"></td>
+        <td th:text="*{petType}"></td>
+        <td th:text="${pet.owner?.firstName + ' ' + pet.owner?.lastName}"></td>
+    </tr>
+</table>
+
+<table th:object="${newVisit}" class="table table-striped">
+    <tr>
+        <th>Visit Date</th>
+        <th>Description</th>
+        <th>Veterinary</th>
+        <th>Hourly Pay</th>
+        <th>Duration</th>
+        <th>Amount</th>
+    </tr>
+    <tr>
+        <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
+        <td th:text="*{description}"></td>
+        <td th:text="${newVisit.vet.firstName + ' ' + newVisit.vet.lastName}"></td>
+        <td th:text="${newVisit.vet.price.hourlyPay + ' '+ newVisit.vet.price.currency}"></td>
+        <td th:text="${newVisit.duration + ' hour'}"></td>
+        <td th:text="${newVisit.amount + ' ' + newVisit.vet.price.currency}"></td>
+    </tr>
+</table>
+
+<!--<form th:object="${newVisit}" class="form-horizontal">-->
+<!--    <div class="table table-striped">-->
+<!--        <label class="col-sm-2 control-label" th:text="Veterinary">Label</label>-->
+<!--        <div class="col-sm-10">-->
+<!--            <td th:text="*{date}"></td>-->
+<!--        </div>-->
+<!--        <label class="col-sm-2 control-label" th:text="Veterinary">Label</label>-->
+<!--        <div class="col-sm-10">-->
+<!--            <td th:text="*{description}"></td>-->
+<!--        </div>-->
+<!--        <label class="col-sm-2 control-label" th:text="Veterinary">Label</label>-->
+<!--        <div class="col-sm-10">-->
+<!--            <td th:text="${newVisit.vet.firstName + ' ' + newVisit.vet.lastName}"></td>-->
+<!--        </div>-->
+<!--        <label class="col-sm-2 control-label" th:text="Veterinary">Label</label>-->
+<!--        <div class="col-sm-10">-->
+<!--            <td th:text="${newVisit.vet.price.hourlyPay + ' ' + newVisit.vet.price.currency}"></td>-->
+<!--        </div>-->
+<!--        <label class="col-sm-2 control-label" th:text="Veterinary">Label</label>-->
+<!--        <div class="col-sm-10">-->
+<!--            <td th:text="*{duration + ' hour'}"></td>-->
+<!--        </div>-->
+<!--        <label class="col-sm-2 control-label" th:text="Veterinary">Label</label>-->
+<!--        <div class="col-sm-10">-->
+<!--            <td th:text="${newVisit.amount + ' ' + newVisit.vet.price.currency}"></td>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <input type="hidden" name="petId" th:value="${pet.id}" />
+            <button class="btn btn-default" >
+                <a th:href="@{/owners/{ownerId}/(ownerId=${owner.id})}">Update Visit</a>
+            </button>
+        </div>
+    </div>
+</form>

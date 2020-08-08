@@ -57,17 +57,19 @@
                 <tr>
                     <th>Visit Date</th>
                     <th>Description</th>
-                    <th>Vet</th>
+                    <th>Veterinary</th>
                     <th>Hourly Pay</th>
-                    <th>Currency</th>
+                    <th>Duration</th>
+                    <th>Amount</th>
                 </tr>
                 </thead>
                 <tr th:each="visit : ${pet.visits}">
                     <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
                     <td th:text="${visit.description}"></td>
                     <td th:text="${visit.vet.firstName + ' ' + visit.vet.lastName}"></td>
-                    <td th:text="${visit.vet.price.hourlyPay}"></td>
-                    <td th:text="${visit.vet.price.currency}"></td>
+                    <td th:text="${visit.vet.price.hourlyPay + ' '+ visit.vet.price.currency}"></td>
+                    <td th:text="${visit.duration + ' hour'}"></td>
+                    <td th:text="${visit.amount + ' ' + visit.vet.price.currency}"></td>
                 </tr>
                 <tr>
                     <td><a

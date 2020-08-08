@@ -122,6 +122,7 @@ public class DataLoader implements CommandLineRunner {
         dogVisit.setPet(mikesPet);
         dogVisit.setVet(savedVet1);
         dogVisit.setDate(LocalDate.now());
+        dogVisit.setDuration(2);
         dogVisit.setDescription("Dog visit");
         this.visitService.save(dogVisit);
 
@@ -129,6 +130,7 @@ public class DataLoader implements CommandLineRunner {
         catVisit.setPet(fionas);
         catVisit.setVet(savedVet2);
         catVisit.setDate(LocalDate.now());
+        catVisit.setDuration(1);
         catVisit.setDescription("Sneezy Kitty");
         this.visitService.save(catVisit);
 
