@@ -1,9 +1,18 @@
 package tian.springframework.petclinic.controllers;
 
+import com.adyen.Client;
+import com.adyen.enums.Environment;
+import com.adyen.model.Amount;
+import com.adyen.model.checkout.PaymentMethodsRequest;
+import com.adyen.model.checkout.PaymentMethodsResponse;
+import com.adyen.service.Checkout;
+import com.adyen.service.exception.ApiException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import tian.springframework.petclinic.model.Owner;
 import tian.springframework.petclinic.model.Pet;
 import tian.springframework.petclinic.model.Vet;
@@ -14,6 +23,7 @@ import tian.springframework.petclinic.services.VisitService;
 
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +38,19 @@ public class VisitController {
     private final VisitService visitService;
     private final PetService petService;
     private final VetService vetService;
+
+    @Value("${merchantReference}")
+    private String merchantReference;
+
+    @Value("${X-API-Key}")
+    private String xApiKey;
+
+    @Value("${merchantAccount}")
+    private String mechantAccount;
+
+    @Value("${WebServiceUser}")
+    private String webServiceUser;
+
 
     public VisitController(VisitService visitService, PetService petService, VetService vetService) {
         this.visitService = visitService;
@@ -82,7 +105,8 @@ public class VisitController {
      *  Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is called
      */
     @PostMapping("/owners/{ownerId}/pets/{petId}/visits/new")
-    public String processNewVisitForm(@Valid Visit visit, BindingResult result, Map<String, Object> model) {
+    public String processNewVisitForm(@Valid Visit visit, @PathVariable Long ownerId, @PathVariable Long petId,
+                                      BindingResult result, Map<String, Object> model) {
         if (result.hasErrors()) {
             return "pets/createOrUpdateVisitForm";
         } else {
@@ -90,8 +114,42 @@ public class VisitController {
             Owner owner = newVisit.getPet().getOwner();
             model.put("newVisit", newVisit);
             model.put("owner", owner);
-
-            return "pets/reviewCurrentVisit";
+            model.put("pet", newVisit.getPet());
+            String checkoutUrl = "redirect:/owners/" + ownerId
+                    + "/pets/" + petId
+                    + "/visits/" + newVisit.getId()
+                    + "/checkout";
+            return checkoutUrl;
         }
+    }
+
+    @GetMapping("/owners/*/pets/{petId}/visits/{visitId}/checkout")
+    public ModelAndView processNewVisitCheckout(@PathVariable("visitId") Long visitId, @PathVariable("petId") Long petId) {
+        ModelAndView mav = new ModelAndView("pets/reviewCurrentVisit");
+        System.out.println(merchantReference);
+        mav.addObject(visitService.findById(visitId));
+
+        // test for Adyen
+        Client client = new Client(xApiKey, Environment.TEST);
+
+        Checkout checkout = new Checkout(client);
+        PaymentMethodsRequest paymentMethodsRequest = new PaymentMethodsRequest();
+        paymentMethodsRequest.setMerchantAccount(mechantAccount);
+        paymentMethodsRequest.setCountryCode("NL");
+        paymentMethodsRequest.setShopperLocale("nl-NL");
+        Amount amount = new Amount();
+        amount.setCurrency("EUR");
+        amount.setValue(1000L);
+        paymentMethodsRequest.setAmount(amount);
+        paymentMethodsRequest.setChannel(PaymentMethodsRequest.ChannelEnum.WEB);
+        try {
+            PaymentMethodsResponse response = checkout.paymentMethods(paymentMethodsRequest);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return mav;
     }
 }
