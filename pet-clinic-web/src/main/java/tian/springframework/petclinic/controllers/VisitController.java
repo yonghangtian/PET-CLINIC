@@ -39,19 +39,6 @@ public class VisitController {
     private final PetService petService;
     private final VetService vetService;
 
-    @Value("${merchantReference}")
-    private String merchantReference;
-
-    @Value("${X-API-Key}")
-    private String xApiKey;
-
-    @Value("${merchantAccount}")
-    private String mechantAccount;
-
-    @Value("${WebServiceUser}")
-    private String webServiceUser;
-
-
     public VisitController(VisitService visitService, PetService petService, VetService vetService) {
         this.visitService = visitService;
         this.petService = petService;
@@ -126,30 +113,7 @@ public class VisitController {
     @GetMapping("/owners/*/pets/{petId}/visits/{visitId}/checkout")
     public ModelAndView processNewVisitCheckout(@PathVariable("visitId") Long visitId, @PathVariable("petId") Long petId) {
         ModelAndView mav = new ModelAndView("pets/reviewCurrentVisit");
-        System.out.println(merchantReference);
         mav.addObject(visitService.findById(visitId));
-
-        // test for Adyen
-        Client client = new Client(xApiKey, Environment.TEST);
-
-        Checkout checkout = new Checkout(client);
-        PaymentMethodsRequest paymentMethodsRequest = new PaymentMethodsRequest();
-        paymentMethodsRequest.setMerchantAccount(mechantAccount);
-        paymentMethodsRequest.setCountryCode("NL");
-        paymentMethodsRequest.setShopperLocale("nl-NL");
-        Amount amount = new Amount();
-        amount.setCurrency("EUR");
-        amount.setValue(1000L);
-        paymentMethodsRequest.setAmount(amount);
-        paymentMethodsRequest.setChannel(PaymentMethodsRequest.ChannelEnum.WEB);
-        try {
-            PaymentMethodsResponse response = checkout.paymentMethods(paymentMethodsRequest);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         return mav;
     }
 }
