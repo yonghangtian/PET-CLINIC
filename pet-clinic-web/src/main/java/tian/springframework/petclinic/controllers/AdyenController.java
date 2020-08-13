@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 import tian.springframework.petclinic.model.Owner;
 import tian.springframework.petclinic.model.Visit;
 import tian.springframework.petclinic.services.PetService;
@@ -68,7 +69,7 @@ public class AdyenController {
 
 
     @GetMapping("/owners/*/pets/*/visits/{visitId}/adyen/getPaymentMethod")
-    public PaymentMethodsResponse getPaymentMethod(@PathVariable("visitId") Long visitId){
+    public ModelAndView getPaymentMethod(@PathVariable("visitId") Long visitId){
 
         Visit visit = visitService.findById(visitId);
         Owner owner = visit.getPet().getOwner();
@@ -102,7 +103,10 @@ public class AdyenController {
         }
 
         // 2,get list of payment methods, then pass response to Drop-in
-        return response;
+        ModelAndView mav = new ModelAndView("adyen/paymentMethod");
+        mav.addObject(response);
+
+        return mav;
     }
 
     @PostMapping("/owners/*/pets/*/visits/{visitId}/adyen/submitPaymentRequest")

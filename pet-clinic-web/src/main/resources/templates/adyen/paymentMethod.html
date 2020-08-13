@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Checkout Visit</title>
+<script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js"
+        integrity="sha384-wG2z9zSQo61EIvyXmiFCo+zB3y0ZB4hsrXVcANmpP8HLthjoQJQPBh7tZKJSV8jA"
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css"
+      integrity="sha384-8ofgICZZ/k5cC5N7xegqFZOA73H9RQ7H13439JfAZW8Gj3qjuKL2isaTD3GMIhDE"
+      crossorigin="anonymous">
+</head>
+
+<body>
+<div id="dropin-container">
+
+    <div>
+        <h3> Display oneClickPaymentMethods</h3>
+        <table class="table-condensed" th:if="${paymentMethodsResponse.oneClickPaymentMethods != null}"
+               th:each="oneClick : ${paymentMethodsResponse.oneClickPaymentMethods}">
+            <thead>
+            <!--to refactor-->
+            <tr>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <!--to refactor-->
+            <tr>
+                <td th:text="${oneClick.name}"></td>
+            </tr>
+            <tr>
+                <!--to refactor-->
+                <td>
+                    <a th:href="@{index}">Choose</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div>
+        <h3>Display payment methods</h3>
+        <table class="table-condensed" th:if="${paymentMethodsResponse.paymentMethods != null}"
+            th:each="paymentMethod : ${paymentMethodsResponse.paymentMethods}">
+            <thead>
+            <!--to refactor-->
+            <tr>
+                <th>Type</th>
+                <th>Brand</th>
+                <td></td>
+            </tr>
+            </thead>
+            <!--to refactor-->
+            <tr th:each="brand : ${paymentMethod.brands}">
+                <td th:text="${paymentMethod.name}"></td>
+                <td th:text="${brand}"></td>
+                <td> <a th:href="@{/index}"><img src="../static/resources/images/choose.png"></a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div>
+        <h3>Display stored payment methods</h3>
+        <table class="table-condensed" th:if="${paymentMethodsResponse.storedPaymentMethods != null}"
+               th:each="storedPayment : ${paymentMethodsResponse.storedPaymentMethods}">
+            <thead>
+            <!--to refactor-->
+            <tr>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <!--to refactor-->
+            <tr>
+                <td th:text="${storedPayment.name}"></td>
+            </tr>
+            <tr>
+                <!--to refactor-->
+                <td>
+                    <a th:href="@{index}">Choose</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>
