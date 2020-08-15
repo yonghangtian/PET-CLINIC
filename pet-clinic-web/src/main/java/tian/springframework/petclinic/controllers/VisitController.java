@@ -1,13 +1,5 @@
 package tian.springframework.petclinic.controllers;
 
-import com.adyen.Client;
-import com.adyen.enums.Environment;
-import com.adyen.model.Amount;
-import com.adyen.model.checkout.PaymentMethodsRequest;
-import com.adyen.model.checkout.PaymentMethodsResponse;
-import com.adyen.service.Checkout;
-import com.adyen.service.exception.ApiException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -23,7 +15,6 @@ import tian.springframework.petclinic.services.VisitService;
 
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

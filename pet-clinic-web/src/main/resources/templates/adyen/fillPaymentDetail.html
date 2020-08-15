@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fill Payment Details</title>
+    <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js"
+            integrity="sha384-wG2z9zSQo61EIvyXmiFCo+zB3y0ZB4hsrXVcANmpP8HLthjoQJQPBh7tZKJSV8jA"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css"
+          integrity="sha384-8ofgICZZ/k5cC5N7xegqFZOA73H9RQ7H13439JfAZW8Gj3qjuKL2isaTD3GMIhDE"
+          crossorigin="anonymous">
+</head>
+<body>
+<!-- Add Payment information for reference -->
+    <div id = "dropin-container">
+        <form class="form-horizontal" method="post">
+            <div class="form-group has-feedback">
+                <!--  to refactor into expected format -->
+                Holder First name:
+                <input type="text" name="firstname">
+                <br>
+                Holder Last name:
+                <input type="text" name="lastname">
+                <br>
+                Card number:
+                <input type="number" name="lastname">
+                <br>
+                Expiry month:
+                <input type="number" name="lastname">
+                <br>
+                Expiry year:
+                <input type="number" name="lastname">
+                <br>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button class="btn btn-default" type="submit">Pay</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</body>
+
+<!-- create configuration object, and related events -->
+<script>
+
+</script>
+</html>

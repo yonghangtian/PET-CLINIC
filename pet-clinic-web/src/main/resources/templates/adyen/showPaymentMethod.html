@@ -2,17 +2,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Checkout Visit</title>
-<script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js"
-        integrity="sha384-wG2z9zSQo61EIvyXmiFCo+zB3y0ZB4hsrXVcANmpP8HLthjoQJQPBh7tZKJSV8jA"
-        crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css"
-      integrity="sha384-8ofgICZZ/k5cC5N7xegqFZOA73H9RQ7H13439JfAZW8Gj3qjuKL2isaTD3GMIhDE"
-      crossorigin="anonymous">
+    <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js"
+            integrity="sha384-wG2z9zSQo61EIvyXmiFCo+zB3y0ZB4hsrXVcANmpP8HLthjoQJQPBh7tZKJSV8jA"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css"
+          integrity="sha384-8ofgICZZ/k5cC5N7xegqFZOA73H9RQ7H13439JfAZW8Gj3qjuKL2isaTD3GMIhDE"
+          crossorigin="anonymous">
 </head>
 
 <body>
-<div id="dropin-container">
-
+<div >
     <div>
         <h3> Display oneClickPaymentMethods</h3>
         <table class="table-condensed" th:if="${paymentMethodsResponse.oneClickPaymentMethods != null}"
@@ -52,7 +51,9 @@
             <tr th:each="brand : ${paymentMethod.brands}">
                 <td th:text="${paymentMethod.name}"></td>
                 <td th:text="${brand}"></td>
-                <td> <a th:href="@{/index}"><img src="../static/resources/images/choose.png"></a></td>
+                <td> <a th:href="@{./credit-card/{brand}(brand = ${brand})}">
+                    <img src="../static/resources/images/choose.png"></a>
+                </td>
             </tr>
         </table>
     </div>

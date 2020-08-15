@@ -45,6 +45,8 @@ public class AdyenController {
     @Value("${merchantReference}")
     private String merchantReference;
 
+    private PaymentMethodsResponse paymentMethodsResponse;
+
     private final VisitService visitService;
     private final PetService petService;
     private final VetService vetService;
@@ -91,11 +93,11 @@ public class AdyenController {
         paymentMethodsRequest.setShopperLocale("en-US");
         paymentMethodsRequest.setAmount(amount);
         paymentMethodsRequest.setChannel(PaymentMethodsRequest.ChannelEnum.WEB);
-        PaymentMethodsResponse response = null;
+        paymentMethodsResponse = null;
 
         // do request for payment methods
         try {
-            response = checkout.paymentMethods(paymentMethodsRequest);
+            paymentMethodsResponse = checkout.paymentMethods(paymentMethodsRequest);
         } catch (ApiException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -103,14 +105,27 @@ public class AdyenController {
         }
 
         // 2,get list of payment methods, then pass response to Drop-in
-        ModelAndView mav = new ModelAndView("adyen/paymentMethod");
-        mav.addObject(response);
+        ModelAndView mav = new ModelAndView("adyen/showPaymentMethod");
+        mav.addObject(paymentMethodsResponse);
 
         return mav;
     }
 
-    @PostMapping("/owners/*/pets/*/visits/{visitId}/adyen/submitPaymentRequest")
-    public PaymentsResponse postPaymentRequest(@PathVariable("visitId") Long visitId) {
+    @GetMapping("/owners/*/pets/*/visits/{visitId}/adyen/credit-card/{brand}")
+    public ModelAndView getCardBrandAndReturnConfig(@PathVariable("visitId") Long visitId,
+                                                    @PathVariable String brand) {
+        PaymentMethodsResponse response = this.getPaymentMethodsResponse();
+
+        ModelAndView modelAndView = new ModelAndView("adyen/fillPaymentDetail");
+        modelAndView.addObject(response);
+
+        return modelAndView;
+    }
+
+
+    @PostMapping("/owners/*/pets/*/visits/{visitId}/adyen/{paymentMethod}/{brand}/submitPaymentRequest")
+    public PaymentsResponse postPaymentRequest(@PathVariable("visitId") Long visitId,
+                                               @PathVariable String paymentMethod, @PathVariable String brand) {
 
         Visit visit = visitService.findById(visitId);
         Owner owner = visit.getPet().getOwner();
@@ -140,13 +155,15 @@ public class AdyenController {
         PaymentsResponse paymentsResponse = null;
         try {
             paymentsResponse = checkout.payments(paymentsRequest);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ApiException | IOException e) {
             e.printStackTrace();
         }
 
         // 4, get payment result, then pass response to Drop-in
         return paymentsResponse;
+    }
+
+    public PaymentMethodsResponse getPaymentMethodsResponse() {
+        return paymentMethodsResponse;
     }
 }
