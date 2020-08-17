@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -60,5 +61,27 @@ public class Owner extends Person {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Owner)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        Owner owner = (Owner) o;
+        return Objects.equals(getAddress(), owner.getAddress()) &&
+                Objects.equals(getCity(), owner.getCity()) &&
+                Objects.equals(getTelephone(), owner.getTelephone());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getAddress(), getCity(), getTelephone());
     }
 }

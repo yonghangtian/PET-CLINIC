@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fill Payment Details</title>
+
+    <script src="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.js"
+            integrity="sha384-wG2z9zSQo61EIvyXmiFCo+zB3y0ZB4hsrXVcANmpP8HLthjoQJQPBh7tZKJSV8jA"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://checkoutshopper-test.adyen.com/checkoutshopper/sdk/3.10.1/adyen.css"
+          integrity="sha384-8ofgICZZ/k5cC5N7xegqFZOA73H9RQ7H13439JfAZW8Gj3qjuKL2isaTD3GMIhDE"
+          crossorigin="anonymous">
+</head>
+
+<body>
+<!-- Add Payment information for reference -->
+    <div id = "dropin-container">
+        <form class="form-horizontal">
+            <!--  to refactor into expected format -->
+            Holder First name:
+            <input id = "firstName" type="text" name="firstname">
+            <br>
+            Holder Last name:
+            <input id = "lastName" type="text" name="lastname">
+            <br>
+            Card number:
+            <input id = "cardNum" type="number" name="cardnumber" value="4111111145551142">
+            <br>
+            Expiry month:
+            <input id = "expiryMon" type="number" max="12" min="1" name="expirymonth" value="03">
+            <br>
+            Expiry year:
+            <input id = "expiryYear" type="number" max="2099" min="2000" name="expiryyear" value="2030">
+            <br>
+            Security code:
+            <input id = "securityCode" type="number" max="999" min="000" name="securitycode" value="737">
+            <br>
+            <input id="paymentResponse" type="hidden" value="${paymentMethodsResponse}">
+            <input id="clientKey" type="hidden" value="${clientKey}">
+            <input id="locale" type="hidden" value="${locale}">
+            <button onclick="submitPayment()" >Submit</button>
+        </form>
+    </div>
+
+<p id="demo" onclick="myFunction()">Click me to change my HTML content (innerHTML).</p>
+
+</body>
+
+<script>
+
+    function myFunction() {
+        document.getElementById("demo").innerHTML = "hello";
+        // document.getElementById("firstName").value;
+    }
+
+    const Http = new XMLHttpRequest();
+    function submitPayment() {
+        const state = {
+            isValid: true,
+            data: {
+                paymentMethod: {
+                    type: "scheme",
+                    encryptedCardNumber: document.getElementById("cardNum").value,
+                    encryptedExpiryMonth: document.getElementById("expiryMon").value,
+                    encryptedExpiryYear: document.getElementById("expiryYear").value,
+                    encryptedSecurityCode: document.getElementById("securityCode").value,
+                    holderName: document.getElementById("lastName").value + ' ' + document.getElementById("firstName").value
+                }
+            }
+        };
+        configuration.onSubmit(state, dropin);
+    }
+
+
+    function makePayment(data) {
+        // format url
+        const currentUrl = location.href;
+        console.log(currentUrl);
+        const postUrl = currentUrl + "/submitPaymentRequest";
+
+        // do post request
+        Http.open("POST", postUrl);
+        Http.setRequestHeader("Content-Type", "application/json");
+        Http.send(JSON.stringify(data.paymentMethod));
+        // server side should do payment request to Adyen.
+
+        return Http.response;
+    }
+
+    function makeDetailsCall(data) {
+        // format url
+        const currentUrl = location.href;
+        console.log(currentUrl);
+        const postUrl = currentUrl + "/getDetails";
+
+        // do post request
+        Http.open("POST", postUrl, true);
+        Http.setRequestHeader("Content-Type", "application/json");
+        Http.send(data);
+        // server side should do payment request to Adyen.
+
+        return Http.response;
+    }
+
+    function showFinalResult(response) {
+        // todo
+        const currentUrl = location.href;
+        const getUrl = currentUrl + "/result";
+
+        Http.open("GET", getUrl, true);
+        Http.send(null);
+
+        return Http.response;
+    }
+
+
+
+    const clientKey = document.getElementById("clientKey").value;
+    const locale =  document.getElementById("locale").value;
+    const paymentMethodsResponse = document.getElementById("paymentResponse");
+    const configuration = {
+        paymentMethodsResponse: paymentMethodsResponse, // The `/paymentMethods` response from the server.
+        clientKey: clientKey, // Web Drop-in versions before 3.10.1 use originKey instead of clientKey.
+        locale: locale,
+        environment: "test",
+        onSubmit: (state, dropin) => {
+            // Your function calling your server to make the `/payments` request
+            makePayment(state.data)
+                .then(response => {
+                    if (response.action) {
+                        // Drop-in handles the action object from the /payments response
+                        dropin.handleAction(response.action);
+                    } else {
+                        // Your function to show the final result to the shopper
+                        showFinalResult(response);
+                    }
+                })
+                .catch(error => {
+                    throw Error(error);
+                });
+        },
+        onAdditionalDetails: (state, dropin) => {
+            // Your function calling your server to make a `/payments/details` request
+            makeDetailsCall(state.data)
+                .then(response => {
+                    if (response.action) {
+                        // Drop-in handles the action object from the /payments response
+                        dropin.handleAction(response.action);
+                    } else {
+                        // Your function to show the final result to the shopper
+                        showFinalResult(response);
+                    }
+                })
+                .catch(error => {
+                    throw Error(error);
+                });
+        },
+        paymentMethodsConfiguration: {
+            card: { // Example optional configuration for Cards
+                hasHolderName: true,
+                holderNameRequired: true,
+                enableStoreDetails: true,
+                hideCVC: false, // Change this to true to hide the CVC field for stored cards
+                name: 'Credit card'
+            }
+        }
+    };
+
+    const checkout = new AdyenCheckout(configuration);
+    // understand how this get the values in dropin-container
+    const dropin = checkout.create('dropin').mount('#dropin-container');
+
+</script>
+</html>

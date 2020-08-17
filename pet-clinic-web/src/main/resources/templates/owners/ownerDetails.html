@@ -16,15 +16,15 @@
     </tr>
     <tr>
         <th>Address</th>
-        <td th:text="*{address}" /></td>
+        <td th:text="*{address}"></td>
     </tr>
     <tr>
         <th>City</th>
-        <td th:text="*{city}" /></td>
+        <td th:text="*{city}" />
     </tr>
     <tr>
         <th>Telephone</th>
-        <td th:text="*{telephone}" /></td>
+        <td th:text="*{telephone}" />
     </tr>
 </table>
 
@@ -46,8 +46,7 @@
                 <dt>Name</dt>
                 <dd th:text="${pet.name}" /></dd>
                 <dt>Birth Date</dt>
-                <dd
-                        th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}" /></dd>
+                <dd th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}" /></dd>
                 <dt>Type</dt>
                 <dd th:text="${pet.petType}" /></dd>
             </dl>
@@ -58,11 +57,19 @@
                 <tr>
                     <th>Visit Date</th>
                     <th>Description</th>
+                    <th>Veterinary</th>
+                    <th>Hourly Pay</th>
+                    <th>Duration</th>
+                    <th>Amount</th>
                 </tr>
                 </thead>
                 <tr th:each="visit : ${pet.visits}">
                     <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
-                    <td th:text="${visit?.description}"></td>
+                    <td th:text="${visit.description}"></td>
+                    <td th:text="${visit.vet.firstName + ' ' + visit.vet.lastName}"></td>
+                    <td th:text="${visit.vet.price.hourlyPay + ' '+ visit.vet.price.currency}"></td>
+                    <td th:text="${visit.duration + ' hour'}"></td>
+                    <td th:text="${visit.amount + ' ' + visit.vet.price.currency}"></td>
                 </tr>
                 <tr>
                     <td><a

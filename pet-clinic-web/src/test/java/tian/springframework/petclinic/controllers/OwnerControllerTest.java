@@ -43,8 +43,22 @@ class OwnerControllerTest {
     @BeforeEach
     void setUp() {
         owners = new HashSet<>();
-        owners.add(Owner.builder().id(1l).build());
-        owners.add(Owner.builder().id(2l).build());
+        owners.add(Owner.builder()
+                .id(1l)
+                .lastName("fuck")
+                .firstName("fuck")
+                .address("HK")
+                .city("HK")
+                .telephone("131613")
+                .build());
+        owners.add(Owner.builder()
+                .id(2l)
+                .lastName("fucker")
+                .firstName("fucker")
+                .address("SH")
+                .city("SH")
+                .telephone("1316134")
+                .build());
 
         mockMvc = MockMvcBuilders.standaloneSetup(ownerController).build();
     }

@@ -4,12 +4,12 @@
 <body>
 
 <h2>
-    <th:block th:if="${visit['new']}">New </th:block>
-    Visit
+    <th:block th:if="${visit['new']}">New Visit</th:block>
 </h2>
 
 <b>Pet</b>
-<table class="table table-striped">
+<!--/*@thymesVar id="pet" type="tian.springframework.petclinic.model.Pet"*/-->
+<table class="table table-striped" th:object="${pet}">
     <thead>
     <tr>
         <th>Name</th>
@@ -18,13 +18,11 @@
         <th>Owner</th>
     </tr>
     </thead>
-    <tr>
-        <td th:text="${pet.name}" /></td>
-        <td
-                th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}" /></td>
-        <td th:text="${pet.petType}" /></td>
-        <td
-                th:text="${pet.owner?.firstName + ' ' + pet.owner?.lastName}" /></td>
+    <tr >
+        <td th:text="*{name}"></td>
+        <td th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}"></td>
+        <td th:text="*{petType}"></td>
+        <td th:text="${pet.owner?.firstName + ' ' + pet.owner?.lastName}"></td>
     </tr>
 </table>
 
@@ -34,6 +32,17 @@
                 th:replace="~{fragments/inputField :: input ('Date', 'date', 'date')}"  />
         <input
                 th:replace="~{fragments/inputField :: input ('Description', 'description', 'text')}" />
+        <input
+                th:replace="~{fragments/inputField :: input ('Duration', 'duration', 'number')}" />
+        <!--/*@thymesVar id="vet" type="tian.springframework.petclinic.model.Vet"*/-->
+        <label class="col-sm-2 control-label" th:text="Veterinary">Label</label>
+        <div class="col-sm-10">
+            <select th:field="${visit.vet}">
+                <option th:each="vet : ${vets}"
+                        th:value="${vet.id}"
+                        th:text="${vet.firstName}">dog</option>
+            </select>
+        </div>
     </div>
 
     <div class="form-group">
@@ -48,12 +57,20 @@
 <b>Previous Visits</b>
 <table class="table table-striped">
     <tr>
-        <th>Date</th>
+        <th>Visit Date</th>
         <th>Description</th>
+        <th>Veterinary</th>
+        <th>Hourly Pay</th>
+        <th>Duration</th>
+        <th>Amount</th>
     </tr>
     <tr th:if="${!visit['new']}" th:each="visit : ${pet.visits}">
-        <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}" /></td>
-        <td th:text=" ${visit.description}" /></td>
+        <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
+        <td th:text="${visit.description}"></td>
+        <td th:text="${visit.vet.firstName + ' ' + visit.vet.lastName}"></td>
+        <td th:text="${visit.vet.price.hourlyPay + ' '+ visit.vet.price.currency}"></td>
+        <td th:text="${visit.duration + ' hour'}"></td>
+        <td th:text="${visit.amount + ' ' + visit.vet.price.currency}"></td>
     </tr>
 </table>
 
