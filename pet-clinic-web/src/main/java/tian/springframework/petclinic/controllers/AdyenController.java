@@ -6,11 +6,7 @@ import com.adyen.model.Amount;
 import com.adyen.model.checkout.*;
 import com.adyen.service.Checkout;
 import com.adyen.service.exception.ApiException;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -21,10 +17,10 @@ import tian.springframework.petclinic.model.Visit;
 import tian.springframework.petclinic.services.PetService;
 import tian.springframework.petclinic.services.VetService;
 import tian.springframework.petclinic.services.VisitService;
-
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,8 +28,6 @@ import java.util.Map;
  */
 @Controller
 public class AdyenController {
-
-    protected static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
     @Value("${WebServiceUser}")
     private String webServiceUser;
@@ -122,10 +116,7 @@ public class AdyenController {
                                                     @PathVariable String brand,
                                                     Map<String, Object> model) {
         model.put("clientKey", this.clientKey);
-
-        String paymentMethodsResponse  = GSON.toJson(this.getPaymentMethodsResponse());
-
-        model.put("paymentMethodsResponse", paymentMethodsResponse);
+        model.put("paymentMethodsResponse", this.getPaymentMethodsResponse());
         model.put("locale", this.locale);
 
         return new ModelAndView("adyen/fillPaymentDetail");
@@ -140,20 +131,32 @@ public class AdyenController {
     public PaymentsResponse postPaymentRequest(@PathVariable("visitId") Long visitId,
                                                @PathVariable("paymentMethod") String paymentMethod,
                                                @PathVariable("brand") String brand,
-                                               @RequestBody JSONObject data) {
-        JSONObject paymentDetails = null;
+                                               @RequestBody String data) {
+
+        Map<String,String> creditCardDetails = null;
+        String encryptedCardNumber = null;
+        String encryptedExpiryMonth = null;
+        String encryptedExpiryYear = null;
+        String encryptedSecurityCode = null;
+        String holderName = null;
         try {
-            paymentDetails = data.getJSONObject("paymentMethod");
-        } catch (JSONException e) {
+            creditCardDetails =
+                    new ObjectMapper().readValue(data, HashMap.class);
+
+            encryptedCardNumber = creditCardDetails.get("encryptedCardNumber");
+            encryptedExpiryMonth = creditCardDetails.get("encryptedExpiryMonth");
+            encryptedExpiryYear = creditCardDetails.get("encryptedExpiryYear");
+            encryptedSecurityCode = creditCardDetails.get("encryptedSecurityCode");
+            holderName = creditCardDetails.get("holderName");
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
         Visit visit = visitService.findById(visitId);
         Owner owner = visit.getPet().getOwner();
 
         // 3, submit payment request with Drop-in event data.
         // Set your X-API-KEY with the API key from the Customer Area.
-        Client client = new Client(xApiKey,Environment.TEST);
+        Client client = new Client(xApiKey, Environment.TEST);
 
         Checkout checkout = new Checkout(client);
 
@@ -165,22 +168,9 @@ public class AdyenController {
         paymentsRequest.setMerchantAccount(merchantAccount);
         paymentsRequest.setAmount(amount);
 
-        String encryptedCardNumber = null;
-        String encryptedExpiryMonth = null;
-        String encryptedExpiryYear = null;
-        String encryptedSecurityCode = null;
-        try {
-            encryptedCardNumber = paymentDetails.getString("");
-            encryptedExpiryMonth = paymentDetails.getString("");
-            encryptedExpiryYear = paymentDetails.getString("");
-            encryptedSecurityCode = paymentDetails.getString("");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        paymentsRequest.setReference("Your order number");
+        paymentsRequest.setReference("TIAN 's testing");
         paymentsRequest.addEncryptedCardData(encryptedCardNumber,encryptedExpiryMonth, encryptedExpiryYear, encryptedSecurityCode, "John Smith");
-        paymentsRequest.setReturnUrl("https://your-company.com/checkout?shopperOrder=12xy..");
+        paymentsRequest.setReturnUrl("http://localhost:8080/owners/1");
         PaymentsResponse paymentsResponse = null;
         try {
             paymentsResponse = checkout.payments(paymentsRequest);

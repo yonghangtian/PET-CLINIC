@@ -24,19 +24,21 @@
             <input id = "lastName" type="text" name="lastname">
             <br>
             Card number:
-            <input id = "cardNum" type="number" name="cardnumber">
+            <input id = "cardNum" type="number" name="cardnumber" value="4111111145551142">
             <br>
             Expiry month:
-            <input id = "expiryMon" type="number" max="12" min="1" name="expirymonth">
+            <input id = "expiryMon" type="number" max="12" min="1" name="expirymonth" value="03">
             <br>
             Expiry year:
-            <input id = "expiryYear" type="number" max="2099" min="2000" name="expiryyear">
+            <input id = "expiryYear" type="number" max="2099" min="2000" name="expiryyear" value="2030">
             <br>
             Security code:
-            <input id = "securityCode" type="number" max="999" min="000" name="securitycode">
+            <input id = "securityCode" type="number" max="999" min="000" name="securitycode" value="737">
             <br>
             <input id="paymentResponse" type="hidden" value="${paymentMethodsResponse}">
-            <button href="test" onclick="configuration.onSubmit(status,dropin)" >Try it</button>
+            <input id="clientKey" type="hidden" value="${clientKey}">
+            <input id="locale" type="hidden" value="${locale}">
+            <button onclick="submitPayment()" >Submit</button>
         </form>
     </div>
 
@@ -52,12 +54,23 @@
     }
 
     const Http = new XMLHttpRequest();
-    //
-    // function cascadeJson() {
-    //     const container = document.getElementById("dropin-container");
-    //
-    //     let firstName = container.
-    // }
+    function submitPayment() {
+        const state = {
+            isValid: true,
+            data: {
+                paymentMethod: {
+                    type: "scheme",
+                    encryptedCardNumber: document.getElementById("cardNum").value,
+                    encryptedExpiryMonth: document.getElementById("expiryMon").value,
+                    encryptedExpiryYear: document.getElementById("expiryYear").value,
+                    encryptedSecurityCode: document.getElementById("securityCode").value,
+                    holderName: document.getElementById("lastName").value + ' ' + document.getElementById("firstName").value
+                }
+            }
+        };
+        configuration.onSubmit(state, dropin);
+    }
+
 
     function makePayment(data) {
         // format url
@@ -66,9 +79,9 @@
         const postUrl = currentUrl + "/submitPaymentRequest";
 
         // do post request
-        Http.open("POST", postUrl, true);
+        Http.open("POST", postUrl);
         Http.setRequestHeader("Content-Type", "application/json");
-        Http.send(data);
+        Http.send(JSON.stringify(data.paymentMethod));
         // server side should do payment request to Adyen.
 
         return Http.response;
@@ -100,8 +113,10 @@
         return Http.response;
     }
 
-    const clientKey = "[[${clientKey}]]";
-    const locale =  "[[${locale}]]";
+
+
+    const clientKey = document.getElementById("clientKey").value;
+    const locale =  document.getElementById("locale").value;
     const paymentMethodsResponse = document.getElementById("paymentResponse");
     const configuration = {
         paymentMethodsResponse: paymentMethodsResponse, // The `/paymentMethods` response from the server.
