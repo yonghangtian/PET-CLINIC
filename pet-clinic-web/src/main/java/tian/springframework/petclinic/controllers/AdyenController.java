@@ -3,19 +3,18 @@ package tian.springframework.petclinic.controllers;
 import com.adyen.Client;
 import com.adyen.enums.Environment;
 import com.adyen.model.Amount;
-import com.adyen.model.checkout.PaymentMethodsRequest;
-import com.adyen.model.checkout.PaymentMethodsResponse;
-import com.adyen.model.checkout.PaymentsRequest;
-import com.adyen.model.checkout.PaymentsResponse;
+import com.adyen.model.checkout.*;
 import com.adyen.service.Checkout;
 import com.adyen.service.exception.ApiException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import tian.springframework.petclinic.model.Owner;
 import tian.springframework.petclinic.model.Visit;
@@ -26,12 +25,15 @@ import tian.springframework.petclinic.services.VisitService;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Map;
 
 /**
  * @author tian
  */
 @Controller
 public class AdyenController {
+
+    protected static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
     @Value("${WebServiceUser}")
     private String webServiceUser;
@@ -44,6 +46,12 @@ public class AdyenController {
 
     @Value("${merchantReference}")
     private String merchantReference;
+
+    @Value("${clientKey}")
+    private String clientKey;
+
+    @Value("${locale}")
+    private String locale;
 
     private PaymentMethodsResponse paymentMethodsResponse;
 
@@ -78,7 +86,7 @@ public class AdyenController {
 
         // 1,Submit payment methods request
         // initial client
-        Client client = new Client(xApiKey, Environment.TEST);
+        Client client = new Client(this.xApiKey, Environment.TEST);
         Checkout checkout = new Checkout(client);
 
         //initial amount
@@ -88,9 +96,9 @@ public class AdyenController {
 
         //initial payment methods request
         PaymentMethodsRequest paymentMethodsRequest = new PaymentMethodsRequest();
-        paymentMethodsRequest.setMerchantAccount(merchantAccount);
+        paymentMethodsRequest.setMerchantAccount(this.merchantAccount);
         paymentMethodsRequest.setCountryCode(owner.getCity());
-        paymentMethodsRequest.setShopperLocale("en-US");
+        paymentMethodsRequest.setShopperLocale(this.locale);
         paymentMethodsRequest.setAmount(amount);
         paymentMethodsRequest.setChannel(PaymentMethodsRequest.ChannelEnum.WEB);
         paymentMethodsResponse = null;
@@ -98,9 +106,7 @@ public class AdyenController {
         // do request for payment methods
         try {
             paymentMethodsResponse = checkout.paymentMethods(paymentMethodsRequest);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ApiException | IOException e) {
             e.printStackTrace();
         }
 
@@ -113,19 +119,34 @@ public class AdyenController {
 
     @GetMapping("/owners/*/pets/*/visits/{visitId}/adyen/credit-card/{brand}")
     public ModelAndView getCardBrandAndReturnConfig(@PathVariable("visitId") Long visitId,
-                                                    @PathVariable String brand) {
-        PaymentMethodsResponse response = this.getPaymentMethodsResponse();
+                                                    @PathVariable String brand,
+                                                    Map<String, Object> model) {
+        model.put("clientKey", this.clientKey);
 
-        ModelAndView modelAndView = new ModelAndView("adyen/fillPaymentDetail");
-        modelAndView.addObject(response);
+        String paymentMethodsResponse  = GSON.toJson(this.getPaymentMethodsResponse());
 
-        return modelAndView;
+        model.put("paymentMethodsResponse", paymentMethodsResponse);
+        model.put("locale", this.locale);
+
+        return new ModelAndView("adyen/fillPaymentDetail");
     }
-
+//
+//    @PostMapping("/owners/*/pets/*/visits/*/adyen/credit-card/{brand}")
+//    public ModelAndView receivePaymentDetail(@PathVariable("brand") String brand){
+//        return new ModelAndView("adyen/fillPaymentDetail");
+//    }
 
     @PostMapping("/owners/*/pets/*/visits/{visitId}/adyen/{paymentMethod}/{brand}/submitPaymentRequest")
     public PaymentsResponse postPaymentRequest(@PathVariable("visitId") Long visitId,
-                                               @PathVariable String paymentMethod, @PathVariable String brand) {
+                                               @PathVariable("paymentMethod") String paymentMethod,
+                                               @PathVariable("brand") String brand,
+                                               @RequestBody JSONObject data) {
+        JSONObject paymentDetails = null;
+        try {
+            paymentDetails = data.getJSONObject("paymentMethod");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Visit visit = visitService.findById(visitId);
         Owner owner = visit.getPet().getOwner();
@@ -144,10 +165,18 @@ public class AdyenController {
         paymentsRequest.setMerchantAccount(merchantAccount);
         paymentsRequest.setAmount(amount);
 
-        String encryptedCardNumber = "adyenjs_0_1_18$...encryptedCardNumber";
-        String encryptedExpiryMonth = "adyenjs_0_1_18$...encryptedExpiryMonth";
-        String encryptedExpiryYear = "adyenjs_0_1_18$...encryptedExpiryYear";
-        String encryptedSecurityCode = "adyenjs_0_1_18$...encryptedSecurityCode";
+        String encryptedCardNumber = null;
+        String encryptedExpiryMonth = null;
+        String encryptedExpiryYear = null;
+        String encryptedSecurityCode = null;
+        try {
+            encryptedCardNumber = paymentDetails.getString("");
+            encryptedExpiryMonth = paymentDetails.getString("");
+            encryptedExpiryYear = paymentDetails.getString("");
+            encryptedSecurityCode = paymentDetails.getString("");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         paymentsRequest.setReference("Your order number");
         paymentsRequest.addEncryptedCardData(encryptedCardNumber,encryptedExpiryMonth, encryptedExpiryYear, encryptedSecurityCode, "John Smith");
